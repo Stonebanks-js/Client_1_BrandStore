@@ -42,13 +42,26 @@ interface ManifestView {
   srcSmall: string | null;
   width: number;
   height: number;
+  /** The panel background the shot was cut from, so frames match it instead of cropping. */
+  bg?: string;
 }
 
 interface ManifestEntry {
   /** The client's own product photograph for this category, when one exists. */
   product?: ManifestView;
+  /** Every colourway the client has actually photographed, in the order they show them. */
+  gallery?: Array<ManifestView & { label: string }>;
   views?: Partial<Record<ViewKey, ManifestView>>;
   source: string;
+}
+
+export interface CategoryShot {
+  label: string;
+  src: string;
+  srcSmall: string | null;
+  width: number;
+  height: number;
+  bg?: string;
 }
 
 export interface CategoryImage {
@@ -56,6 +69,7 @@ export interface CategoryImage {
   srcSmall: string | null;
   width: number;
   height: number;
+  bg?: string;
 }
 
 const manifest = imageManifest as {
@@ -72,6 +86,24 @@ export function imageProvenance(slug: string): string | null {
 export function hasPhotography(slug: string): boolean {
   const entry = manifest.categories[slug];
   return Boolean(entry?.views?.front || entry?.product);
+}
+
+/**
+ * The real colourways for a category, when the client has photographed them. Returned in
+ * place of the drafted front/side/back so the viewer shows what is actually on the rail
+ * rather than three angles of a drawing.
+ */
+export function categoryGallery(slug: string): CategoryShot[] {
+  const gallery = manifest.categories[slug]?.gallery;
+  if (!gallery?.length) return [];
+  return gallery.map((g) => ({
+    label: g.label,
+    src: g.src,
+    srcSmall: g.srcSmall,
+    width: g.width,
+    height: g.height,
+    bg: g.bg,
+  }));
 }
 
 /**

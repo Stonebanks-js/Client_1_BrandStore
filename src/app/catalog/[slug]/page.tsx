@@ -69,7 +69,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </nav>
 
           <div className="mt-8 grid items-center gap-10 pb-[clamp(2.5rem,6vw,4.5rem)] lg:grid-cols-[minmax(0,46%)_minmax(0,54%)] lg:gap-16">
-            <div className="relative aspect-[4/5] overflow-hidden bg-paper-2">
+            <div
+              className="relative aspect-[4/5] overflow-hidden bg-paper-2"
+              style={hero?.bg ? { background: hero.bg } : undefined}
+            >
               {hero ? (
                 <img
                   src={hero.src}
@@ -80,7 +83,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                   height={hero.height}
                   fetchPriority="high"
                   decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover"
+                  className="absolute inset-0 h-full w-full object-contain"
                 />
               ) : (
                 <div className="absolute inset-0 grid place-items-center p-[12%]">

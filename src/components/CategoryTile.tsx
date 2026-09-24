@@ -29,7 +29,10 @@ export default function CategoryTile({
       className="group block focus-visible:outline-offset-4"
       aria-label={`${category.name} — view the collection`}
     >
-      <div className={`relative overflow-hidden bg-paper-2 ${ratio}`}>
+      <div
+        className={`relative overflow-hidden bg-paper-2 ${ratio}`}
+        style={image?.bg ? { background: image.bg } : undefined}
+      >
         {image ? (
           <img
             src={image.src}
@@ -41,7 +44,7 @@ export default function CategoryTile({
             loading={priority ? 'eager' : 'lazy'}
             fetchPriority={priority ? 'high' : 'auto'}
             decoding="async"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035]"
+            className="absolute inset-0 h-full w-full object-contain transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035]"
           />
         ) : (
           <div className="absolute inset-0 grid place-items-center bg-paper-2 p-[14%]">
