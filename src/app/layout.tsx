@@ -6,7 +6,6 @@ import SmoothScroll from '@/components/SmoothScroll';
 import SiteHeader from '@/components/SiteHeader';
 import SiteFooter from '@/components/SiteFooter';
 import WhatsAppFab from '@/components/WhatsAppFab';
-import Grain from '@/components/Grain';
 import PageTransition from '@/components/PageTransition';
 import { site } from '@/data/site';
 
@@ -90,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <a
           href="#main"
-          className="t-label sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-cream focus:px-4 focus:py-3 focus:text-ink"
+          className="t-label sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-paper focus:px-4 focus:py-3 focus:text-ink"
         >
           Skip to content
         </a>
@@ -101,7 +100,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="main">{children}</main>
         <SiteFooter />
         <WhatsAppFab />
-        <Grain />
       </body>
     </html>
   );

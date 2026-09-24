@@ -366,14 +366,21 @@ export interface GarmentFlatProps {
   garment: GarmentKind;
   view: ViewKey;
   tone: string;
+  /** Inverts the shading for a light plate — the dark-background gradient reads as a ghost on paper. */
+  onLight?: boolean;
   className?: string;
 }
 
-export default function GarmentFlat({ garment, view, tone, className }: GarmentFlatProps) {
+export default function GarmentFlat({
+  garment,
+  view,
+  tone,
+  onLight = false,
+  className,
+}: GarmentFlatProps) {
   const isTop = garment in TOPS;
-  const uid = `${garment}-${view}`;
-
   const stroke = tone;
+  const fillOpacity = onLight ? 0.1 : 0.16;
   const thin = 1.1;
   const thick = 2.1;
 
@@ -386,18 +393,6 @@ export default function GarmentFlat({ garment, view, tone, className }: GarmentF
       focusable="false"
       preserveAspectRatio="xMidYMid meet"
     >
-      <defs>
-        <linearGradient id={`fill-${uid}`} x1="0.1" y1="0" x2="0.6" y2="1">
-          <stop offset="0%" stopColor={tone} stopOpacity="0.3" />
-          <stop offset="55%" stopColor={tone} stopOpacity="0.15" />
-          <stop offset="100%" stopColor={tone} stopOpacity="0.06" />
-        </linearGradient>
-        <linearGradient id={`edge-${uid}`} x1="0" y1="0" x2="0.25" y2="1">
-          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.92" />
-          <stop offset="38%" stopColor={tone} stopOpacity="0.95" />
-          <stop offset="100%" stopColor={tone} stopOpacity="0.62" />
-        </linearGradient>
-      </defs>
 
       {isTop
         ? (() => {
@@ -406,15 +401,15 @@ export default function GarmentFlat({ garment, view, tone, className }: GarmentF
             return (
               <g
                 fill="none"
-                stroke={`url(#edge-${uid})`}
+                stroke={stroke}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 vectorEffect="non-scaling-stroke"
               >
                 {sleeves.map((d, i) => (
-                  <path key={`s${i}`} d={d} fill={`url(#fill-${uid})`} strokeWidth={thick} />
+                  <path key={`s${i}`} d={d} fill={tone} fillOpacity={fillOpacity} strokeWidth={thick} />
                 ))}
-                <path d={outline} fill={`url(#fill-${uid})`} strokeWidth={thick} />
+                <path d={outline} fill={tone} fillOpacity={fillOpacity} strokeWidth={thick} />
                 {details.map((d, i) => (
                   <path key={`d${i}`} d={d} strokeWidth={thin} opacity={0.7} />
                 ))}
@@ -430,15 +425,15 @@ export default function GarmentFlat({ garment, view, tone, className }: GarmentF
             return (
               <g
                 fill="none"
-                stroke={`url(#edge-${uid})`}
+                stroke={stroke}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 vectorEffect="non-scaling-stroke"
               >
                 {outline.map((d, i) => (
-                  <path key={`l${i}`} d={d} fill={`url(#fill-${uid})`} strokeWidth={thick} />
+                  <path key={`l${i}`} d={d} fill={tone} fillOpacity={fillOpacity} strokeWidth={thick} />
                 ))}
-                <path d={waistBand} fill={`url(#fill-${uid})`} strokeWidth={thick} />
+                <path d={waistBand} fill={tone} fillOpacity={fillOpacity} strokeWidth={thick} />
                 {details.map((d, i) => (
                   <path key={`d${i}`} d={d} strokeWidth={thin} opacity={0.65} />
                 ))}

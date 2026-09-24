@@ -1,5 +1,42 @@
 {
-  "generatedAt": null,
+  "generatedAt": "2026-09-24T21:41:23.121Z",
   "model": null,
-  "categories": {}
+  "categories": {
+    "round-neck-t-shirts": {
+      "product": {
+        "src": "/catalog/round-neck-t-shirts/product.webp",
+        "srcSmall": "/catalog/round-neck-t-shirts/product@640.webp",
+        "width": 1000,
+        "height": 1248
+      },
+      "source": "The client's own product photography, from their Off Season Sale creative"
+    },
+    "oversized-t-shirts": {
+      "product": {
+        "src": "/catalog/oversized-t-shirts/product.webp",
+        "srcSmall": "/catalog/oversized-t-shirts/product@640.webp",
+        "width": 1000,
+        "height": 1248
+      },
+      "source": "The client's own product photography, from their Off Season Sale creative"
+    },
+    "lower": {
+      "product": {
+        "src": "/catalog/lower/product.webp",
+        "srcSmall": "/catalog/lower/product@640.webp",
+        "width": 1000,
+        "height": 1247
+      },
+      "source": "The client's own product photography, from their Off Season Sale creative"
+    },
+    "polo-t-shirts": {
+      "product": {
+        "src": "/catalog/polo-t-shirts/product.webp",
+        "srcSmall": "/catalog/polo-t-shirts/product@640.webp",
+        "width": 1000,
+        "height": 1246
+      },
+      "source": "The client's own product photography, from their Off Season Sale creative"
+    }
+  }
 }

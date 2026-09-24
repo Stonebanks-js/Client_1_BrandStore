@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 
-import PageIntro from '@/components/PageIntro';
-import CategoryCard from '@/components/CategoryCard';
+import CategoryTile from '@/components/CategoryTile';
+import SectionHead from '@/components/SectionHead';
 import RevealSection from '@/components/RevealSection';
-import CTAButton from '@/components/CTAButton';
-import { InstagramIcon, WhatsAppIcon } from '@/components/icons';
-import { catalog, allCategories } from '@/data/catalog';
+import { WhatsAppIcon } from '@/components/icons';
+import { catalog } from '@/data/catalog';
 import { site, whatsappLink } from '@/data/site';
 
 export const metadata: Metadata = {
@@ -16,101 +15,67 @@ export const metadata: Metadata = {
 };
 
 export default function CatalogPage() {
-  let running = -1;
-
   return (
     <>
-      <PageIntro
-        label={`Catalog · ${allCategories.length} Categories`}
-        title={
-          <>
-            Everything
-            <br />
-            on the <em className="font-normal italic text-cream-dim">floor</em>.
-          </>
-        }
-        lead="Two groups, eight categories. Open one to see it front, side and back, then message us about what you want to try."
-      />
-
-      {/* group index */}
-      <RevealSection className="border-b border-line bg-ink-2 py-7">
-        <div className="shell flex flex-wrap items-center gap-x-8 gap-y-4">
-          <span className="t-label text-cream-mute">Jump to</span>
-          {catalog.map((group) => (
-            <a
-              key={group.key}
-              href={`#${group.key}`}
-              className="t-label text-cream transition-colors duration-200 hover:text-gold"
-            >
-              {group.title}
-            </a>
-          ))}
-          <span aria-hidden className="hidden h-px flex-1 bg-line sm:block" />
-          <span className="t-label text-cream-mute">{site.tagline}</span>
+      {/* Opening: one line, then straight into the clothes. */}
+      <section className="bg-paper pb-[clamp(2rem,4vw,3rem)] pt-[calc(var(--header-h)+clamp(3rem,7vw,5.5rem))]">
+        <div className="shell">
+          <h1 className="t-h1 text-on-paper">Catalog</h1>
+          <p className="t-lead mt-5 text-on-paper-dim">
+            Explore the collection. Eight categories on the floor in Arya Nagar — open one to see
+            it properly, then message us about what you want to try.
+          </p>
         </div>
-      </RevealSection>
+      </section>
 
-      {catalog.map((group, gi) => (
+      {catalog.map((group) => (
         <RevealSection
           key={group.key}
           id={group.key}
-          className={`section scroll-mt-[var(--header-h)] ${gi % 2 === 0 ? 'bg-ink' : 'bg-ink-2'}`}
+          className="scroll-mt-[var(--header-h)] bg-paper"
         >
-          <div className="shell">
-            <header className="grid gap-6 md:grid-cols-12 md:items-end">
-              <div className="md:col-span-7">
-                <p className="t-label text-gold" data-rv>
-                  {String(gi + 1).padStart(2, '0')} — {group.title}
-                </p>
-                <h2 className="t-display-l mt-6 text-cream" data-rv>
-                  {group.title}
-                </h2>
-              </div>
-              <p className="t-lead md:col-span-5" data-rv>
-                {group.lede}
-              </p>
-            </header>
+          <div className="shell pb-[clamp(3rem,6vw,5rem)]">
+            <SectionHead title={group.title} lead={group.lede} />
 
-            <div className="mt-[clamp(2.5rem,6vw,4.5rem)] grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
-              {group.categories.map((cat, i) => {
-                running += 1;
-                return (
-                  <div
-                    key={cat.slug}
-                    style={{ ['--rv-delay' as string]: `${i * 90}ms` }}
-                    className={i % 2 === 1 ? 'lg:mt-16' : undefined}
-                  >
-                    <CategoryCard category={cat} index={running} />
-                  </div>
-                );
-              })}
-            </div>
+            <ul className="mt-8 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
+              {group.categories.map((cat, i) => (
+                <li key={cat.slug} data-rv style={{ ['--rv-delay' as string]: `${i * 60}ms` }}>
+                  <CategoryTile
+                    category={cat}
+                    priority={i < 2}
+                    sizes="(max-width: 1024px) 46vw, 24vw"
+                  />
+                </li>
+              ))}
+            </ul>
           </div>
         </RevealSection>
       ))}
 
-      <RevealSection className="section border-t border-line bg-char">
-        <div className="shell-tight text-center">
-          <p className="t-label text-gold" data-rv>
-            Enquire
-          </p>
-          <h2 className="t-display-l mx-auto mt-7 max-w-[18ch] text-cream" data-rv>
-            Ask for what you are looking for.
-          </h2>
-          <p className="t-lead mx-auto mt-7" data-rv>
-            Tell us the category and we will tell you what is on the floor today. No ordering
-            online — this is a showroom.
-          </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-3" data-rv>
-            <CTAButton href={whatsappLink()} variant="gold" external>
-              <WhatsAppIcon className="h-4 w-4" />
+      {/* Close on the one action the site actually has. */}
+      <RevealSection className="bg-ink">
+        <div className="shell py-[clamp(3.5rem,8vw,6rem)]">
+          <div className="flex flex-wrap items-end justify-between gap-8">
+            <div>
+              <h2 className="t-h1 text-on-ink">Ask for what you are looking for</h2>
+              <p className="t-lead mt-5 text-on-ink-dim">
+                Tell us the category and we will tell you what is on the floor today. Nothing is
+                ordered online — this is a showroom.
+              </p>
+            </div>
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 bg-paper px-7 py-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-gold-lt"
+            >
+              <WhatsAppIcon className="h-[18px] w-[18px]" />
               Enquire on WhatsApp
-            </CTAButton>
-            <CTAButton href={site.instagram.url} variant="ghost" external>
-              <InstagramIcon className="h-4 w-4" />
-              Follow on Instagram
-            </CTAButton>
+            </a>
           </div>
+          <p className="t-small mt-8 text-on-ink-mute">
+            {site.location.full} · {site.phoneDisplay}
+          </p>
         </div>
       </RevealSection>
     </>

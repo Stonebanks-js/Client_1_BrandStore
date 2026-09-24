@@ -45,8 +45,17 @@ interface ManifestView {
 }
 
 interface ManifestEntry {
-  views: Partial<Record<ViewKey, ManifestView>>;
+  /** The client's own product photograph for this category, when one exists. */
+  product?: ManifestView;
+  views?: Partial<Record<ViewKey, ManifestView>>;
   source: string;
+}
+
+export interface CategoryImage {
+  src: string;
+  srcSmall: string | null;
+  width: number;
+  height: number;
 }
 
 const manifest = imageManifest as {
@@ -61,7 +70,18 @@ export function imageProvenance(slug: string): string | null {
 }
 
 export function hasPhotography(slug: string): boolean {
-  return Boolean(manifest.categories[slug]?.views?.front);
+  const entry = manifest.categories[slug];
+  return Boolean(entry?.views?.front || entry?.product);
+}
+
+/**
+ * The image that represents a category anywhere it is shown as a whole — tiles, the
+ * mega-menu preview, the catalog. Prefers the client's real product photograph, falls
+ * back to the front model view, and returns null when only the drafted flat exists.
+ */
+export function categoryImage(slug: string): CategoryImage | null {
+  const entry = manifest.categories[slug];
+  return entry?.product ?? entry?.views?.front ?? null;
 }
 
 export interface Category {

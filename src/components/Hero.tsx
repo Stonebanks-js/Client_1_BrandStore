@@ -2,24 +2,23 @@
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { site, whatsappLink } from '@/data/site';
 import { usePrefersReducedMotion } from '@/lib/motion';
-import CTAButton from './CTAButton';
-import { ArrowIcon, WhatsAppIcon } from './icons';
+import { WhatsAppIcon } from './icons';
 
 const HeroCanvas = dynamic(() => import('./HeroCanvas'), { ssr: false });
 
-const HEADLINE = ['Walk in.', 'Everything here', 'was chosen.'];
-
 /**
- * Two deliberate compositions, not one design squeezed twice.
+ * A split opening: the shop on the right, who it is and where it is on the left.
  *
- * Desktop: the showroom fills the frame through the shader plate, and the headline sits in
- * the dark lower-left where the room falls away.
- * Mobile: the same photograph becomes a framed 4:3 plate in the flow — cropping a landscape
- * photograph to portrait puts the viewer inside two letters of the shop sign — with the type
- * running beneath it on solid black.
+ * The photograph is the point, so it keeps its own half of the frame at full strength
+ * instead of being buried under a scrim and a wall of display type. The left panel is
+ * ink so the two halves read as one composition rather than a caption on a picture.
+ *
+ * On a phone the order flips to photograph first, because that is the thing worth seeing
+ * before anything else.
  */
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -29,16 +28,11 @@ export default function Hero() {
   const [entered, setEntered] = useState(false);
   const reduced = usePrefersReducedMotion();
 
-  // Decide once whether the shader plate is worth mounting at all.
   useEffect(() => {
-    if (reduced) {
-      setWebgl(false);
-      return;
-    }
+    if (reduced) return;
     const wide = window.matchMedia('(min-width: 1024px)').matches;
     const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
     if (!wide || nav.connection?.saveData) return;
-
     let ok = false;
     try {
       const c = document.createElement('canvas');
@@ -49,14 +43,12 @@ export default function Hero() {
     setWebgl(ok);
   }, [reduced]);
 
-  // Hero scroll progress, written to a ref so the shader reads it without re-rendering.
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const onScroll = () => {
       const h = el.offsetHeight || 1;
       scrollRef.current = Math.min(1, Math.max(0, window.scrollY / h));
-      el.style.setProperty('--hero-p', scrollRef.current.toFixed(4));
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -67,9 +59,6 @@ export default function Hero() {
     };
   }, []);
 
-  // Stop rendering the canvas once the hero has left the viewport. Visibility is read from
-  // the reported rect rather than `isIntersecting`: the first callback can land before
-  // layout with an empty rect, and parking the loop there freezes the opening black frame.
   useEffect(() => {
     const el = sectionRef.current;
     if (!el || typeof IntersectionObserver === 'undefined') return;
@@ -84,167 +73,89 @@ export default function Hero() {
     return () => io.disconnect();
   }, []);
 
-  // The headline is the LCP element, so the intro starts on the very next frame rather
-  // than after a timer — the choreography is in the per-line delays, not in waiting.
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true));
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const rise = (delay: number) => ({
-    opacity: entered ? 1 : 0,
-    transform: entered ? 'none' : 'translateY(14px)',
-    transitionDelay: `${delay}ms`,
-  });
-
   return (
     <section
       ref={sectionRef}
-      className="relative isolate overflow-hidden bg-ink"
-      style={{ ['--hero-p' as string]: 0 }}
+      className="relative isolate grid min-h-[100svh] grid-cols-1 overflow-hidden bg-ink pt-[var(--header-h)] lg:grid-cols-[minmax(0,42%)_minmax(0,58%)] lg:pt-0"
     >
-      {/* Desktop backdrop. Decorative — the same photograph is presented with a real
-          caption further down the page and on the About page. */}
-      <div aria-hidden className="absolute inset-0 -z-10 hidden lg:block">
+      {/* photograph — first on a phone, right-hand half on a desktop */}
+      <div className="relative order-1 min-h-[44svh] lg:order-2 lg:min-h-0">
         {webgl ? (
-          // Mounted once and parked when offscreen. Unmounting it instead would throw the
-          // WebGL context away and rebuild it every time the hero scrolls back into view.
           <HeroCanvas src="/brand/showroom.jpg" scrollRef={scrollRef} active={inView} />
         ) : (
           <Image
             src="/brand/showroom.jpg"
-            alt=""
+            alt="The BRAND STORE showroom on Sabji Mandi Road: lit shelving of folded shirts, a rail of tees, and the illuminated wall sign"
             fill
             priority
-            sizes="100vw"
+            sizes="(max-width: 1024px) 100vw, 58vw"
             className={`object-cover object-center ${reduced ? '' : 'kenburns'}`}
           />
         )}
+        {/* just enough falloff on the inner edge to join the two halves */}
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(to top, rgba(8,7,6,0.96) 0%, rgba(8,7,6,0.76) 28%, rgba(8,7,6,0.26) 58%, rgba(8,7,6,0.56) 84%, rgba(8,7,6,0.88) 100%)',
-          }}
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-transparent lg:bg-gradient-to-r lg:from-ink lg:via-ink/0 lg:to-transparent"
         />
       </div>
 
-      <div className="shell relative flex min-h-[100svh] flex-col pb-[clamp(3.5rem,9vh,7rem)] pt-[calc(var(--header-h)+clamp(1rem,4vh,2.5rem))]">
-        {/* eyebrow */}
-        <div className="flex items-center gap-4">
-          <span
-            className="t-label text-gold transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-            style={rise(0)}
-          >
-            {site.location.line1} · {site.location.city}
-          </span>
-          <span
-            aria-hidden
-            className="h-px flex-1 origin-left bg-line transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-            style={{ transform: entered ? 'scaleX(1)' : 'scaleX(0)' }}
-          />
-          <span
-            className="t-label hidden items-center gap-3 text-cream-mute transition-opacity duration-[900ms] sm:flex"
-            style={{ opacity: entered ? 1 : 0, transitionDelay: '200ms' }}
-          >
-            {site.taglineParts.map((word, i) => (
-              <span key={word} className="flex items-center gap-3">
-                {i > 0 && <span aria-hidden className="h-2.5 w-px bg-gold/45" />}
-                {word}
-              </span>
-            ))}
-          </span>
-        </div>
-
-        {/* mobile / tablet plate */}
-        <figure
-          data-rv="media"
-          className={`mt-7 lg:hidden ${entered ? 'is-in' : ''}`}
-          aria-hidden
-        >
-          <div className="relative aspect-[4/3] w-full overflow-hidden border border-line/70 bg-char">
-            <Image
-              src="/brand/showroom.jpg"
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className={`object-cover object-center ${reduced ? '' : 'kenburns'}`}
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  'linear-gradient(to top, rgba(8,7,6,0.9) 0%, rgba(8,7,6,0.14) 44%, rgba(8,7,6,0.32) 100%)',
-              }}
-            />
-          </div>
-        </figure>
-
-        {/* headline block */}
+      {/* wordmark and orientation */}
+      <div className="relative order-2 flex flex-col justify-center gap-8 px-[var(--gutter)] py-[clamp(2.5rem,6vh,4.5rem)] lg:order-1 lg:py-0 lg:pl-[max(var(--gutter),4vw)] lg:pr-[clamp(2rem,4vw,4rem)]">
         <div
-          className="mt-auto pt-[clamp(2.25rem,6vh,4rem)]"
-          style={{
-            transform: reduced ? undefined : 'translate3d(0, calc(var(--hero-p) * -3rem), 0)',
-            opacity: reduced ? 1 : 'calc(1 - var(--hero-p) * 1.15)',
-          }}
+          className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          style={{ opacity: entered ? 1 : 0, transform: entered ? 'none' : 'translateY(16px)' }}
         >
-          <h1 className="t-display-xl max-w-[16ch] text-cream">
-            {HEADLINE.map((line, i) => (
-              <span
-                key={line}
-                className={`rv-line ${entered ? 'is-in' : ''}`}
-                style={{ ['--rv-delay' as string]: `${90 + i * 100}ms` }}
-              >
-                <span>
-                  {i === 2 ? (
-                    <>
-                      was <em className="metal font-normal italic">chosen</em>.
-                    </>
-                  ) : (
-                    line
-                  )}
-                </span>
-              </span>
-            ))}
+          <p className="t-small font-semibold uppercase tracking-[0.28em] text-gold-lt">
+            {site.segment}
+          </p>
+
+          <h1 className="t-hero mt-5 text-on-ink">
+            Brand
+            <br />
+            Store
           </h1>
 
-          <div className="mt-8 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-            <p
-              className="t-lead max-w-[46ch] transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-              style={rise(660)}
-            >
-              {site.name} is a {site.segment.toLowerCase()} floor on Sabji Mandi Road, Arya
-              Nagar. Top wear, bottom wear, and the time to try them properly.
-            </p>
+          <p className="t-phrase mt-6 text-[clamp(1.25rem,2vw,1.7rem)] text-on-ink-dim">
+            {site.tagline}
+          </p>
+        </div>
 
-            <div
-              className="flex flex-wrap gap-3 transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] md:shrink-0"
-              style={rise(800)}
+        <div
+          className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          style={{
+            opacity: entered ? 1 : 0,
+            transform: entered ? 'none' : 'translateY(16px)',
+            transitionDelay: '140ms',
+          }}
+        >
+          <p className="t-lead text-on-ink-dim">
+            A menswear floor in Arya Nagar, Kanpur. Come in, try things on properly, and leave
+            with something that fits.
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link
+              href="/catalog"
+              className="inline-flex items-center justify-center bg-paper px-7 py-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-gold-lt"
             >
-              <CTAButton href="/catalog" variant="cream">
-                Explore the catalog
-                <ArrowIcon />
-              </CTAButton>
-              <CTAButton href={whatsappLink()} variant="ghost" external>
-                <WhatsAppIcon className="h-4 w-4" />
-                WhatsApp
-              </CTAButton>
-            </div>
+              Shop the collection
+            </Link>
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2.5 border border-on-ink/30 px-6 py-4 text-[0.95rem] font-semibold text-on-ink transition-colors duration-200 hover:border-on-ink"
+            >
+              <WhatsAppIcon className="h-[18px] w-[18px]" />
+              WhatsApp
+            </a>
           </div>
         </div>
-      </div>
-
-      {/* scroll cue */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 lg:flex"
-        style={{ opacity: reduced ? 1 : 'calc(1 - var(--hero-p) * 3)' }}
-      >
-        <span className="t-label text-cream-mute">Scroll</span>
-        <span className="relative block h-10 w-px overflow-hidden bg-line">
-          <span className="absolute inset-x-0 top-0 block h-4 animate-[cue_2.4s_cubic-bezier(0.65,0,0.35,1)_infinite] bg-gold" />
-        </span>
       </div>
     </section>
   );

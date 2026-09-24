@@ -9,14 +9,14 @@ const base =
 
 const variants: Record<Variant, string> = {
   gold: 'border border-gold/70 text-gold hover:text-ink',
-  ghost: 'border border-line text-cream-dim hover:text-cream hover:border-gold/60',
-  cream: 'border border-cream/80 text-cream hover:text-ink',
+  ghost: 'border border-line-dark text-on-ink-dim hover:text-on-ink hover:border-gold/60',
+  cream: 'border border-on-ink/80 text-on-ink hover:text-ink',
 };
 
 const fills: Record<Variant, string> = {
   gold: 'bg-gold',
-  ghost: 'bg-char-2',
-  cream: 'bg-cream',
+  ghost: 'bg-ink-2',
+  cream: 'bg-paper',
 };
 
 /**

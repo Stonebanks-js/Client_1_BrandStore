@@ -86,7 +86,7 @@ export default function SaleSection() {
           <div className="lg:col-span-7">
             <div className="flex items-center gap-5" data-rv>
               <span className="t-label text-signal">{sale.eyebrow}</span>
-              <span aria-hidden className="h-px flex-1 bg-line" />
+              <span aria-hidden className="h-px flex-1 bg-line-dark" />
             </div>
 
             <h2 id="sale-heading" className="sr-only">
@@ -106,10 +106,10 @@ export default function SaleSection() {
                 <span aria-hidden className="block h-1.5 w-1.5 rounded-full bg-signal" />
                 {sale.badge}
               </span>
-              <span className="t-label text-cream-mute">{sale.kicker}</span>
+              <span className="t-label text-on-ink-mute">{sale.kicker}</span>
             </div>
 
-            <p className="t-lead mt-7 max-w-[44ch]" data-rv style={stagger(1)}>
+            <p className="t-lead mt-7 max-w-[44ch] text-on-ink-dim" data-rv style={stagger(1)}>
               {sale.lead}
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function SaleSection() {
               className="relative mx-auto w-[min(78%,20rem)] lg:w-full lg:max-w-[22rem]"
               data-rv="media"
             >
-              <div className="relative aspect-[2/3] -rotate-[2.4deg] overflow-hidden border border-line bg-char shadow-[0_40px_90px_-40px_rgba(0,0,0,0.95)]">
+              <div className="relative aspect-[2/3] -rotate-[2.4deg] overflow-hidden border border-line-dark bg-ink-2 shadow-[0_40px_90px_-40px_rgba(0,0,0,0.95)]">
                 <Image
                   src={sale.poster.src}
                   alt={sale.poster.alt}
@@ -139,7 +139,7 @@ export default function SaleSection() {
                   }}
                 />
               </div>
-              <figcaption className="t-label mt-4 text-center text-cream-mute lg:text-left">
+              <figcaption className="t-label mt-4 text-center text-on-ink-mute lg:text-left">
                 The original campaign
               </figcaption>
             </figure>
@@ -147,14 +147,14 @@ export default function SaleSection() {
         </div>
 
         {/* offers */}
-        <ul className="mt-[clamp(3.5rem,9vw,7rem)] grid gap-px border border-line bg-line sm:grid-cols-2">
+        <ul className="mt-[clamp(3.5rem,9vw,7rem)] grid gap-px border border-line-dark bg-line-dark sm:grid-cols-2">
           {sale.offers.map((offer, i) => (
             <OfferCard key={offer.id} offer={offer} index={i} />
           ))}
         </ul>
 
         <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between" data-rv>
-          <p className="t-label flex flex-wrap items-center gap-x-4 gap-y-2 text-cream-mute">
+          <p className="t-label flex flex-wrap items-center gap-x-4 gap-y-2 text-on-ink-mute">
             {sale.marks.map((mark, i) => (
               <span key={mark} className="flex items-center gap-4">
                 {i > 0 && <span aria-hidden className="h-2.5 w-px bg-gold/45" />}
@@ -162,7 +162,7 @@ export default function SaleSection() {
               </span>
             ))}
           </p>
-          <p className="t-label text-cream-mute">In store only · While stocks last</p>
+          <p className="t-label text-on-ink-mute">In store only · While stocks last</p>
         </div>
       </div>
     </section>
@@ -177,7 +177,7 @@ function OfferCard({ offer, index }: { offer: SaleOffer; index: number }) {
 
   return (
     <li
-      className="group relative flex flex-col justify-between gap-8 bg-ink-2 p-7 transition-colors duration-[420ms] hover:bg-char sm:p-9 lg:p-10"
+      className="group relative flex flex-col justify-between gap-8 bg-ink-2 p-7 transition-colors duration-[420ms] hover:bg-ink-2 sm:p-9 lg:p-10"
       data-rv
       style={stagger(index, 90)}
     >
@@ -190,17 +190,17 @@ function OfferCard({ offer, index }: { offer: SaleOffer; index: number }) {
       <div>
         <div className="flex items-start justify-between gap-6">
           <div>
-            <p className="t-label text-cream-mute">{offer.quantity}</p>
+            <p className="t-label text-on-ink-mute">{offer.quantity}</p>
             <p className="mt-3 font-display text-[clamp(2.6rem,5.6vw,4.2rem)] leading-[0.9] tracking-[-0.03em]">
               <span className="signal-metal">{offer.price}</span>
             </p>
           </div>
-          <span className="t-label shrink-0 text-cream-mute">
+          <span className="t-label shrink-0 text-on-ink-mute">
             {String(index + 1).padStart(2, '0')}
           </span>
         </div>
 
-        <h3 className="t-display-m mt-7 text-cream">
+        <h3 className="t-display-m mt-7 text-on-ink">
           {offer.title}
           {offer.qualifier && (
             <span className="mt-2 block font-sans text-[0.72rem] uppercase tracking-[0.22em] text-signal">
@@ -209,13 +209,13 @@ function OfferCard({ offer, index }: { offer: SaleOffer; index: number }) {
           )}
         </h3>
 
-        <p className="mt-4 font-display text-[clamp(1.05rem,1.5vw,1.3rem)] italic text-cream-dim">
+        <p className="mt-4 font-display text-[clamp(1.05rem,1.5vw,1.3rem)] italic text-on-ink-dim">
           {offer.line}
         </p>
 
         <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2.5">
           {offer.features.map((feature) => (
-            <li key={feature} className="flex items-center gap-2.5 text-[0.9rem] text-cream-mute">
+            <li key={feature} className="flex items-center gap-2.5 text-[0.9rem] text-on-ink-mute">
               <span aria-hidden className="block h-1 w-1 rotate-45 bg-signal/80" />
               {feature}
             </li>
@@ -228,7 +228,7 @@ function OfferCard({ offer, index }: { offer: SaleOffer; index: number }) {
           {offer.swatches.map((hex) => (
             <span
               key={hex}
-              className="block h-4 w-4 rounded-full border border-line"
+              className="block h-4 w-4 rounded-full border border-line-dark"
               style={{ background: hex }}
             />
           ))}
@@ -237,7 +237,7 @@ function OfferCard({ offer, index }: { offer: SaleOffer; index: number }) {
         <span className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link
             href={`/catalog/${offer.slug}`}
-            className="t-label inline-flex items-center gap-2 text-cream-dim transition-colors duration-200 hover:text-cream"
+            className="t-label inline-flex items-center gap-2 text-on-ink-dim transition-colors duration-200 hover:text-on-ink"
           >
             View category
             <ArrowIcon className="h-3.5 w-3.5 text-signal" />

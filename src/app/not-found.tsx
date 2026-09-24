@@ -8,10 +8,10 @@ export default function NotFound() {
     <section className="flex min-h-[80svh] items-center bg-ink pt-[var(--header-h)]">
       <div className="shell">
         <p className="t-label text-gold">404</p>
-        <h1 className="t-display-l mt-6 max-w-[18ch] text-cream">
-          That rail is <em className="font-normal italic text-cream-dim">empty</em>.
+        <h1 className="t-display-l mt-6 max-w-[18ch] text-on-ink">
+          That rail is <em className="font-normal italic text-on-ink-dim">empty</em>.
         </h1>
-        <p className="t-lead mt-7">
+        <p className="t-lead mt-7 text-on-ink-dim">
           The page you were looking for is not here. The catalog is, though — eight categories,
           front, side and back.
         </p>
@@ -25,7 +25,7 @@ export default function NotFound() {
             Message {site.name}
           </CTAButton>
         </div>
-        <Link href="/" className="t-label mt-10 inline-block text-cream-mute transition-colors hover:text-cream">
+        <Link href="/" className="t-label mt-10 inline-block text-on-ink-mute transition-colors hover:text-on-ink">
           Back to home
         </Link>
       </div>

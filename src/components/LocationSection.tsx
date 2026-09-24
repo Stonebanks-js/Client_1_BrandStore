@@ -71,13 +71,13 @@ export default function LocationSection() {
             <p className="t-label text-gold" data-rv>
               Location
             </p>
-            <h2 id="location-heading" className="t-display-l mt-6 text-cream" data-rv style={stagger(1)}>
+            <h2 id="location-heading" className="t-display-l mt-6 text-on-ink" data-rv style={stagger(1)}>
               Come to
               <br />
               the floor.
             </h2>
           </div>
-          <p className="t-lead md:col-span-5" data-rv style={stagger(2)}>
+          <p className="t-lead text-on-ink-dim md:col-span-5" data-rv style={stagger(2)}>
             Arya Nagar, off Sabji Mandi Road. Message ahead on WhatsApp and we will keep
             something aside for you to try.
           </p>
@@ -86,7 +86,7 @@ export default function LocationSection() {
         <div className="mt-[clamp(3rem,7vw,5.5rem)] grid gap-10 lg:grid-cols-12 lg:gap-14">
           {/* drafted map */}
           <div className="lg:col-span-7">
-            <div className="relative aspect-[4/3] overflow-hidden border border-line bg-char sm:aspect-[16/10]">
+            <div className="relative aspect-[4/3] overflow-hidden border border-line-dark bg-ink-2 sm:aspect-[16/10]">
               {/* the real map, revealed last */}
               {mapReady && (
                 <iframe
@@ -197,25 +197,25 @@ export default function LocationSection() {
                 style={{ opacity: pin, transform: `translateY(${(1 - pin) * 10}px)` }}
               >
                 <PinIcon className="h-4 w-4 text-gold" />
-                <span className="t-label text-cream">{site.name}</span>
+                <span className="t-label text-on-ink">{site.name}</span>
               </div>
 
-              <div aria-hidden className="pointer-events-none absolute inset-0 border border-line/70" />
+              <div aria-hidden className="pointer-events-none absolute inset-0 border border-line-dark/70" />
             </div>
 
-            <p className="t-label mt-4 text-cream-mute">
+            <p className="t-label mt-4 text-on-ink-mute">
               {site.location.full} · {site.location.region}
             </p>
           </div>
 
           {/* address card */}
           <div className="lg:col-span-5">
-            <div className="flex h-full flex-col justify-between border border-line bg-char p-7 sm:p-9" data-rv>
+            <div className="flex h-full flex-col justify-between border border-line-dark bg-ink-2 p-7 sm:p-9" data-rv>
               <div>
                 <p className="t-label text-gold">Visit Us</p>
                 <address className="mt-7 not-italic">
-                  <span className="t-display-m block text-cream">{site.location.line1}</span>
-                  <span className="mt-2 block text-[1.05rem] leading-relaxed text-cream-dim">
+                  <span className="t-display-m block text-on-ink">{site.location.line1}</span>
+                  <span className="mt-2 block text-[1.05rem] leading-relaxed text-on-ink-dim">
                     {site.location.line2}
                     <br />
                     {site.location.city}, {site.location.region}
@@ -226,19 +226,19 @@ export default function LocationSection() {
 
                 <dl className="space-y-5">
                   <div className="flex items-baseline justify-between gap-6">
-                    <dt className="t-label text-cream-mute">Phone</dt>
+                    <dt className="t-label text-on-ink-mute">Phone</dt>
                     <dd>
                       <a
                         href={`tel:+${site.whatsappNumber}`}
-                        className="text-[1.05rem] text-cream transition-colors hover:text-gold"
+                        className="text-[1.05rem] text-on-ink transition-colors hover:text-gold"
                       >
                         {site.phoneDisplay}
                       </a>
                     </dd>
                   </div>
                   <div className="flex items-baseline justify-between gap-6">
-                    <dt className="t-label text-cream-mute">Segment</dt>
-                    <dd className="text-[1.05rem] text-cream-dim">{site.segment}</dd>
+                    <dt className="t-label text-on-ink-mute">Segment</dt>
+                    <dd className="text-[1.05rem] text-on-ink-dim">{site.segment}</dd>
                   </div>
                 </dl>
               </div>

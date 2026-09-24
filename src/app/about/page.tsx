@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 
-import PageIntro from '@/components/PageIntro';
-import LocationSection from '@/components/LocationSection';
-import CTAButton from '@/components/CTAButton';
 import RevealSection from '@/components/RevealSection';
-import { ArrowIcon, InstagramIcon, WhatsAppIcon } from '@/components/icons';
+import SectionHead from '@/components/SectionHead';
+import CategoryTile from '@/components/CategoryTile';
+import LocationSection from '@/components/LocationSection';
+import { WhatsAppIcon, InstagramIcon } from '@/components/icons';
 import { catalog } from '@/data/catalog';
 import { site, whatsappLink } from '@/data/site';
 
@@ -19,196 +18,155 @@ export const metadata: Metadata = {
 
 const PHILOSOPHY = [
   {
-    n: '01',
-    title: 'Style',
+    word: 'Style',
     body:
-      'Style is the decision, not the garment. The floor is arranged so the decision is easy: ' +
-      'top wear on one side, bottom wear on the other, and room to see how they read together.',
+      'Style is the decision, not the garment. The floor is arranged so the decision is easy: tops on one side, bottoms on the other, and room to hold both up together.',
   },
   {
-    n: '02',
-    title: 'Quality',
+    word: 'Quality',
     body:
-      'Quality is something you check with your hands. Every piece here is meant to be taken ' +
-      'off the shelf, opened out, held up and looked at properly before it is bought.',
+      'Quality is something you check with your hands. Everything here is meant to be taken off the shelf, opened out and looked at properly before it is bought.',
   },
   {
-    n: '03',
-    title: 'You',
+    word: 'You',
     body:
-      'The last word on the wall is the one that matters. Nothing is sold as a look to copy — ' +
-      'it is sold as something that has to work on the person standing in the mirror.',
+      'The last word is the one that matters. Nothing is sold as a look to copy — it is sold as something that has to work on the person in the mirror.',
   },
 ];
 
 export default function AboutPage() {
   return (
     <>
-      <PageIntro
-        label={`About · ${site.segment}`}
-        title={
-          <>
-            A men&rsquo;s floor
-            <br />
-            built around <em className="font-normal italic text-cream-dim">three words</em>.
-          </>
-        }
-        lead={`${site.name} is a menswear destination in Kanpur. The whole shop is arranged around the three words on the wall — ${site.tagline}.`}
-      />
+      {/* Opening: the name, the line under it, and the room. */}
+      <section className="bg-paper pt-[calc(var(--header-h)+clamp(2.5rem,6vw,4.5rem))]">
+        <div className="shell">
+          <h1 className="t-h1 max-w-[18ch] text-on-paper">
+            A men&rsquo;s floor in Arya Nagar, Kanpur
+          </h1>
+          <p className="t-phrase mt-6 text-[clamp(1.4rem,2.6vw,2.1rem)] text-on-paper-dim">
+            {site.tagline}
+          </p>
+        </div>
 
-      {/* showroom spread */}
-      <RevealSection className="section bg-ink">
-        <div className="shell grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-7">
-            <div className="relative aspect-[3/2] overflow-hidden bg-char" data-rv="media">
-              <div className="relative h-full w-full">
-                <Image
-                  src="/brand/showroom.jpg"
-                  alt="The BRAND STORE showroom: illuminated wall sign, lit shelving of folded shirts and a rail of hanging tees"
-                  fill
-                  sizes="(max-width: 1024px) 92vw, 54vw"
-                  className="object-cover"
-                />
-              </div>
-              <div aria-hidden className="pointer-events-none absolute inset-0 border border-line/70" />
-            </div>
-            <p className="t-label mt-4 text-cream-mute">
-              The showroom · {site.location.line1}, {site.location.city}
-            </p>
+        <div className="mt-[clamp(2.5rem,5vw,4rem)]">
+          <div className="relative aspect-[16/9] w-full overflow-hidden bg-paper-2 sm:aspect-[21/9]">
+            <Image
+              src="/brand/showroom.jpg"
+              alt="The BRAND STORE showroom: lit shelving of folded shirts, a rail of hanging tees, and the illuminated wall sign"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
           </div>
+        </div>
+      </section>
 
-          <div className="lg:col-span-5 lg:pt-10">
-            <p className="t-label text-gold" data-rv>
-              The Showroom
-            </p>
-            <h2 className="t-display-m mt-6 text-cream" data-rv>
-              Warm light, dark wood, and everything within reach.
-            </h2>
-            <p className="t-body mt-7" data-rv>
-              The room was designed for the part of shopping that cannot be done online: seeing
-              the real colour under real light, feeling the weight of a fold, and putting two
-              things next to each other to see whether they agree.
-            </p>
-            <p className="t-body mt-5" data-rv>
-              Shelving is lit from inside so the tones read true. The rail sits at eye level. The
-              counter carries the line the shop was named for.
-            </p>
+      {/* Philosophy — the three words, given room rather than three identical cards. */}
+      <RevealSection className="bg-paper">
+        <div className="shell py-[clamp(3.5rem,8vw,6rem)]">
+          <SectionHead
+            title="What the three words mean"
+            lead="They are painted on the wall in that order on purpose. It is the order the shop works in too."
+          />
 
-            <p
-              className="mt-10 font-display text-[clamp(1.6rem,3vw,2.6rem)] italic leading-snug text-gold"
-              data-rv
-            >
-              {site.phrase}
-            </p>
+          <div className="mt-10 grid gap-x-12 gap-y-10 md:grid-cols-3">
+            {PHILOSOPHY.map((item, i) => (
+              <div key={item.word} data-rv style={{ ['--rv-delay' as string]: `${i * 80}ms` }}>
+                <p className="t-phrase text-[clamp(1.75rem,3vw,2.5rem)] text-on-paper">
+                  {item.word}
+                </p>
+                <p className="t-body mt-4 text-on-paper-dim">{item.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </RevealSection>
 
-      {/* philosophy */}
-      <RevealSection className="section border-y border-line bg-ink-2">
-        <div className="shell">
-          <div className="grid gap-8 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-6">
-              <p className="t-label text-gold" data-rv>
-                Philosophy
+      {/* The room, told against the photograph. */}
+      <RevealSection className="bg-ink">
+        <div className="shell py-[clamp(3.5rem,8vw,6rem)]">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div data-rv="media" className="relative aspect-[4/3] overflow-hidden bg-ink-2">
+              <Image
+                src="/brand/showroom.jpg"
+                alt=""
+                fill
+                sizes="(max-width: 1024px) 92vw, 46vw"
+                className="object-cover object-right"
+              />
+            </div>
+            <div>
+              <h2 className="t-h1 text-on-ink">The part that cannot be done online</h2>
+              <p className="t-body mt-6 text-on-ink-dim">
+                The room was built for seeing real colour under real light, feeling the weight of a
+                fold, and putting two things next to each other to see whether they agree.
               </p>
-              <h2 className="t-display-l mt-6 text-cream" data-rv>
-                {site.taglineParts.map((word, i) => (
-                  <span key={word} className="block">
-                    {i === 2 ? <em className="font-normal italic metal">{word}</em> : word}
-                    {i < 2 && <span aria-hidden className="text-gold/60"> ·</span>}
-                  </span>
+              <p className="t-body mt-5 text-on-ink-dim">
+                Shelving is lit from inside so the tones read true. The rail sits at eye level. The
+                counter carries the line the shop was named for.
+              </p>
+              <p className="t-phrase mt-8 text-[clamp(1.5rem,2.6vw,2.1rem)] text-gold-lt">
+                {site.phrase}
+              </p>
+            </div>
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* What is actually on the floor. */}
+      <RevealSection className="bg-paper">
+        <div className="shell py-[clamp(3.5rem,8vw,6rem)]">
+          <SectionHead
+            title="What we carry"
+            lead="Menswear only, kept to the categories the shop actually stocks."
+            link={{ href: '/catalog', label: 'Open the catalog' }}
+          />
+          {catalog.map((group) => (
+            <div key={group.key} className="mt-10">
+              <h3 className="t-h3 text-on-paper">{group.title}</h3>
+              <ul className="mt-5 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
+                {group.categories.map((cat, i) => (
+                  <li key={cat.slug} data-rv style={{ ['--rv-delay' as string]: `${i * 60}ms` }}>
+                    <CategoryTile category={cat} sizes="(max-width: 1024px) 46vw, 24vw" />
+                  </li>
                 ))}
-              </h2>
+              </ul>
             </div>
-            <p className="t-lead md:col-span-6" data-rv>
-              Three words on a wall, written in that order on purpose. They are the order the
-              shop works in too.
-            </p>
-          </div>
-
-          <div className="mt-[clamp(3rem,7vw,6rem)] grid gap-px border border-line bg-line md:grid-cols-3">
-            {PHILOSOPHY.map((item) => (
-              <article key={item.n} className="bg-ink-2 p-8 sm:p-10" data-rv>
-                <span className="t-label text-gold">{item.n}</span>
-                <h3 className="t-display-m mt-6 text-cream">{item.title}</h3>
-                <p className="t-body mt-5">{item.body}</p>
-              </article>
-            ))}
-          </div>
+          ))}
         </div>
       </RevealSection>
 
-      {/* categories */}
-      <RevealSection className="section bg-ink">
-        <div className="shell">
-          <div className="grid gap-8 md:grid-cols-12 md:items-end">
-            <div className="md:col-span-7">
-              <p className="t-label text-gold" data-rv>
-                What We Carry
+      {/* Contact, before the map. */}
+      <RevealSection className="bg-ink">
+        <div className="shell py-[clamp(3rem,7vw,5rem)]">
+          <div className="flex flex-wrap items-end justify-between gap-8">
+            <div>
+              <h2 className="t-h1 text-on-ink">Come and see</h2>
+              <p className="t-lead mt-5 text-on-ink-dim">
+                Message ahead, or simply walk in. {site.location.full}.
               </p>
-              <h2 className="t-display-l mt-6 text-cream" data-rv>
-                Two halves of
-                <br />
-                one outfit.
-              </h2>
             </div>
-            <p className="t-lead md:col-span-5" data-rv>
-              Menswear only, kept to the categories the shop actually stocks.
-            </p>
-          </div>
-
-          <div className="mt-[clamp(2.5rem,6vw,4.5rem)] grid gap-10 md:grid-cols-2 md:gap-16">
-            {catalog.map((group) => (
-              <div key={group.key} data-rv>
-                <div className="flex items-baseline gap-5">
-                  <h3 className="t-display-m text-cream">{group.title}</h3>
-                  <span aria-hidden className="h-px flex-1 bg-line" />
-                </div>
-                <p className="t-body mt-5">{group.lede}</p>
-                <ul className="mt-8 border-t border-line">
-                  {group.categories.map((cat) => (
-                    <li key={cat.slug}>
-                      <Link
-                        href={`/catalog/${cat.slug}`}
-                        className="group flex items-center justify-between gap-6 border-b border-line py-5 transition-colors duration-200 hover:border-gold/50"
-                      >
-                        <span className="t-title text-cream-dim transition-colors duration-200 group-hover:text-cream">
-                          {cat.name}
-                        </span>
-                        <ArrowIcon className="h-4 w-4 shrink-0 -translate-x-2 text-gold opacity-0 transition-all duration-[320ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 group-hover:opacity-100" />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </RevealSection>
-
-      {/* contact strip */}
-      <RevealSection className="section bg-char">
-        <div className="shell-tight text-center">
-          <p className="t-label text-gold" data-rv>
-            Come and See
-          </p>
-          <h2 className="t-display-l mx-auto mt-7 max-w-[16ch] text-cream" data-rv>
-            The rest of it happens in the room.
-          </h2>
-          <p className="t-lead mx-auto mt-7 text-center" data-rv>
-            Message ahead, or simply walk in. {site.location.full}.
-          </p>
-
-          <div className="mt-10 flex flex-wrap justify-center gap-3" data-rv>
-            <CTAButton href={whatsappLink()} variant="gold" external>
-              <WhatsAppIcon className="h-4 w-4" />
-              Message on WhatsApp
-            </CTAButton>
-            <CTAButton href={site.instagram.url} variant="ghost" external>
-              <InstagramIcon className="h-4 w-4" />
-              Follow on Instagram
-            </CTAButton>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href={whatsappLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 bg-paper px-7 py-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-gold-lt"
+              >
+                <WhatsAppIcon className="h-[18px] w-[18px]" />
+                WhatsApp
+              </a>
+              <a
+                href={site.instagram.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 border border-on-ink/30 px-6 py-4 text-[0.95rem] font-semibold text-on-ink transition-colors duration-200 hover:border-on-ink"
+              >
+                <InstagramIcon className="h-[18px] w-[18px]" />
+                Instagram
+              </a>
+            </div>
           </div>
         </div>
       </RevealSection>
