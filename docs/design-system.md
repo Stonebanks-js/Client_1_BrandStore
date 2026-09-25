@@ -1,139 +1,100 @@
 # BRAND STORE — Design System
 
 Derived from the client's real assets: the illuminated showroom wall, the Didone B/S
-monogram, and the black + gold catalog card.
+monogram, and the Off Season Sale creative.
 
 ## 1. Art direction
 
-**Statement.** A menswear showroom photographed at night. Warm light raking across dark
-wood, cream fabric folded under it, and one metal-gold line holding the composition.
-The site is that room: mostly dark and quiet, with light arriving where it matters.
+**Statement.** Photography first, product second, type third, brand fourth, motion last.
+The store is a floor in Arya Nagar with warm light on dark wood and folded cotton under it;
+the site is that floor, not a luxury design system with clothes in it.
 
 **Rules.**
-- Black is the page, not a section. Cream is the ink. Gold is punctuation, never fill.
-- Imagery is lit, never flat: every photo carries a warm key light and a deep falloff.
-- Type is editorial — Didone display against a grotesque caption. No third voice.
-- Motion is camera work: drift, focus, reveal. Nothing bounces.
-- Empty space is the luxury signal. If a section feels full, remove something.
+- Light and dark alternate. Light carries browsing and product; dark carries the brand
+  statement, the sale and the close of every page.
+- Gold is punctuation — an underline, a dot, a rule. It never outlines a component.
+- Yellow `--signal` belongs to the sale and nothing else.
+- Imagery dominates. If a section reads as decoration around a heading, cut the decoration.
+- Two typographic voices, no third: Archivo and Bodoni Moda.
+- Motion is camera work: drift, reveal, tilt. Nothing bounces.
 
 ## 2. Colour
 
-| Token | Value | Use |
-|---|---|---|
-| `--ink` | `#080706` | Page base, deepest shadow |
-| `--ink-2` | `#0E0C0A` | Alternating section base |
-| `--char` | `#171310` | Warm charcoal — cards, plates |
-| `--char-2` | `#241D17` | Raised surface, hover plate |
-| `--line` | `#2C241D` | Hairlines, dividers, borders |
-| `--gold` | `#C9973F` | Primary metal — labels, rules, accents |
-| `--gold-lt` | `#E3BE79` | Gold highlight / gradient top stop |
-| `--gold-dp` | `#8A6425` | Gold shadow / gradient bottom stop |
-| `--amber` | `#FFB65C` | Light source colour (glows, lamp wash) |
-| `--cream` | `#F3EDE2` | Primary text on dark |
-| `--cream-dim` | `#BCB3A5` | Secondary text |
-| `--cream-mute` | `#8A8175` | Tertiary / meta text |
-| `--ember` | `#D2662F` | Reserved warm accent |
-| `--signal` | `#F5D90A` | Sale only. Sampled from the client's Off Season Sale artwork (`#F8E000`) and deepened so it sits inside the palette. Used as metal, never as fill. |
-| `--signal-lt` | `#FFEE5C` | Signal highlight / gradient top stop |
-| `--signal-dp` | `#A98F04` | Signal shadow / gradient bottom stop |
+Tokens are declared on `:root` (light) and `[data-theme='dark']` in `src/app/globals.css`,
+then mapped into Tailwind with `@theme inline` so every utility resolves to `var()` and
+follows the theme.
 
-Contrast: `--cream` on `--ink` = 15.9:1. `--cream-dim` on `--ink` = 8.6:1.
-`--cream-mute` on `--ink` = 4.7:1 (meta text ≥ 14px only). `--gold` on `--ink` = 6.4:1.
-
-Gold is applied as a **metal gradient** (`--gold-lt` → `--gold` → `--gold-dp`) on display
-type, and flat `--gold` on rules and small caps. Never as a background fill.
-
-## 3. Typography
-
-- **Display — Bodoni Moda.** High-contrast Didone, echoing the monogram's ball terminals
-  and thin/thick stress. Used for headlines, category titles, the SALE numerals, and
-  italic for brand phrases ("Good Clothes Better Mood").
-- **Grotesque — Archivo.** Nav, labels, body, buttons, address. Wide weight range, slightly
-  condensed cut — closest available match to the showroom's sign lettering.
-
-Scale (fluid, `clamp`):
-
-| Token | Size | Tracking | Use |
+| Token | Light | Dark | Use |
 |---|---|---|---|
-| `display-xl` | 5.5–13rem | -0.03em | Hero wordmark, SALE numerals |
-| `display-l` | 3–6.5rem | -0.025em | Section headlines |
-| `display-m` | 2–3.25rem | -0.02em | Category titles |
-| `title` | 1.25–1.75rem | -0.01em | Card titles |
-| `body-l` | 1.0625–1.25rem | 0 | Lead paragraphs |
-| `body` | 1rem | 0 | Body |
-| `label` | 0.6875–0.75rem | 0.22em | Small caps, eyebrows, nav |
+| `--bg` | `#f7f6f3` | `#080706` | Page base |
+| `--bg-2` | `#edebe5` | `#171310` | Alternating surface, image panel fallback |
+| `--fg` | `#14120f` | `#f3ede2` | Primary text |
+| `--fg-dim` | `#56514a` | `#bcb3a5` | Secondary text |
+| `--fg-mute` | `#7d776d` | `#8a8175` | Tertiary / meta |
+| `--line` | `#dcd8d0` | `#2c241d` | Hairlines, borders |
+| `--accent` | `#7a5a20` | `#c9973f` | Eyebrows, inline links |
+| `--gold` | `#b8863b` | `#c9973f` | Metal: underline, dots, focus ring |
+| `--band` | `#14120f` | `#120f0c` | Dark band base (sale, footer, categories card) |
+| `--band-2` | `#1e1b17` | `#241d17` | Raised surface on a band |
+| `--on-band` | `#f7f6f3` | `#f3ede2` | Text on a band |
+| `--on-band-dim` | `#bab4aa` | `#bcb3a5` | Secondary text on a band |
+| `--band-line` | `#302b24` | `#2c241d` | Hairlines on a band |
+| `--signal` | `#f5d90a` | `#f5d90a` | Sale only |
+| `--btn-bg` / `--btn-fg` | `#14120f` / `#f7f6f3` | `#f3ede2` / `#080706` | Solid button |
+| `--header-bg` | `rgba(247,246,243,.9)` | `rgba(8,7,6,.88)` | Blurred header and sticky bars |
 
-Body measure caps at 62ch. Display line-height 0.9–1.0; body 1.65.
+## 3. Type
 
-## 4. Space & grid
+Two families, loaded through `next/font/google` as `--font-archivo` and `--font-bodoni`.
 
-8px base. Scale: 4 8 12 16 24 32 48 64 96 128 176 240.
-Section rhythm: `clamp(5.5rem, 10vw, 11rem)` vertical padding; hero and pinned sections are
-viewport-driven instead.
+| Class | Definition |
+|---|---|
+| `.t-display` | Archivo 900, uppercase, letter-spacing `-0.045em`, line-height `0.84` |
+| `.t-serif` | Bodoni Moda italic 400, letter-spacing `-0.02em`, line-height `1` |
+| `.t-eyebrow` | Archivo 600, 11px, `0.28em`, uppercase, `--accent` |
+| `.t-btn` | Archivo 700, 12px, `0.18em`, uppercase |
 
-Grid: 12 columns desktop (max 1440px content, 1680px bleed), 8 tablet, 4 mobile.
-Gutter `clamp(16px, 3vw, 40px)`. Page gutter `clamp(20px, 5vw, 80px)`.
+Button heights: 56px in a hero, 44px in the header, 52px in the mobile bar.
 
-Radii: `2px` default (near-sharp, editorial), `0` on full-bleed media, `999px` for pills.
-Elevation is light, not shadow: raised surfaces gain a warm inner top hairline.
+Masked headline lines use `.mask-line`, which carries the font-size plus a
+`padding-bottom: .2em` / `margin-bottom: -.2em` pair so caps and descenders are never
+cropped by the overflow that makes the mask work.
 
-## 5. Motion system
+## 4. Layout
 
-Easings
-- `--ease-out`: `cubic-bezier(0.16, 1, 0.3, 1)` — entrances, reveals
-- `--ease-io`: `cubic-bezier(0.65, 0, 0.35, 1)` — transforms, menus
-- `--ease-cam`: `cubic-bezier(0.33, 0, 0.1, 1)` — scroll-linked camera moves
+- Container `.shell`: max-width 1680px, gutter `clamp(16px, 5vw, 80px)`.
+- Header height `clamp(60px, 7vw, 76px)`; `main` is padded by the same amount.
+- Radius: 2px on cards and buttons, 999px on pills and the floating CTA.
+- Focus: 2px `--gold` outline, offset 3px.
+- Breakpoint: mobile and tablet art direction ≤1023px, desktop ≥1024px (Tailwind `lg:`).
+- Product grid: `repeat(auto-fill, minmax(clamp(150px, 40vw, 280px), 1fr))`, gap
+  `clamp(28px,3vw,48px) clamp(12px,2vw,28px)`.
 
-Durations: `120ms` micro · `320ms` element · `640ms` reveal · `900ms` section · `1200ms` page
+## 5. Cascade
 
-Vocabulary
-- **Type reveal** — mask up, per-line, 80ms stagger, `--ease-out`.
-- **Image reveal** — clip-path inset with a 1.08 → 1.0 scale counter-move, 900ms.
-- **Camera drift** — scrubbed parallax, 2–8% travel, never more.
-- **Hover** — 120ms intent, gold hairline draw, 1.03 media scale under a fixed mask.
-- **Page transition** — cream/ink curtain wipe, 600ms out / 600ms in.
+Tailwind v4 orders its layers `theme, base, components, utilities`, and anything left
+unlayered outranks all four. The site's own rules are therefore filed deliberately:
+element styles into `@layer base`, the `.shell` / `.t-*` / `.mask-line` classes into
+`@layer components`. Without that, an unlayered `a { color: inherit }` silently beats
+`text-btn-fg` and solid link-buttons render their label in the background colour.
 
-Reduced motion: every reveal resolves to its end state immediately, Lenis is not mounted,
-the WebGL hero is replaced by the still image, scrubbed sections become static stacks.
+## 6. Motion
 
-## 6. 3D strategy
+Ease `cubic-bezier(0.16, 1, 0.3, 1)` unless noted. All values live in
+`src/components/MotionLayer.tsx`.
 
-3D earns its place in exactly one place: the hero. A single full-screen plane renders the
-real showroom photograph through a shader that adds pointer- and scroll-driven parallax
-depth, a breathing lens vignette, chromatic edge falloff, and film grain — the room appears
-to be filmed rather than photographed. One draw call, no models, no post-processing pass.
+| Effect | Values |
+|---|---|
+| Headline masks | y `115%`→0, rotate `5°`→0, 1100ms, delay `120 + i·110`ms |
+| Hero photo intro | scale `1.3`→`1.1`, brightness `.4`→`1`, 2400ms `cubic-bezier(0.22,1,0.36,1)` |
+| Parallax | `-(centre − viewportCentre) × speed`, clamped to ±4.5% of the container (hero `.2`, editorial `.12`) |
+| Scroll 3D | `p = clamp((centre − vh/2)/(vh/1.6), −1, 1)`; `rotateX(p·32°) translateZ(−|p|·80px)`; opacity `1 − max(0, p−.4)·.8` |
+| Reveal | opacity 0, `translateY(64px) rotateX(-14°) scale(.96)` → rest, 1000ms, 90ms stagger |
+| Ticker | `translateX(0 → −50%)` over 32s; velocity scales the rate by `1 + |v|/8` and skews `−v/6°`, resetting after 140ms idle |
+| Wordmark | `translateX = (sectionTop − 0.3vh) × 0.45` |
+| Tilt | `rotateX((.5−py)·10·amt) rotateY((px−.5)·12·amt) translateY(-6px)`, 140ms follow / 700ms release; amounts: card `0.9`, home offer `0.8`, sale panel `0.6`, poster `1.4` |
+| Magnetic | `dx·.22, dy·.35`, 160ms follow / 500ms release |
+| Route change | fade up 32px over 700ms (`.route-in`) |
 
-Not mounted when: viewport < 900px, `prefers-reduced-motion`, no WebGL, or `saveData`.
-Fallback is the same photograph with a CSS Ken-Burns drift, visually continuous.
-The canvas is `aria-hidden`; the hero's meaning lives entirely in the DOM behind it.
-
-## 7. Components
-
-`SiteHeader` · `CatalogMegaMenu` · `MobileNav` · `Hero` (+ `HeroCanvas`) · `Marquee` ·
-`SaleSection` (+ `OfferCard`) · `FeaturedCollection` · `CategoryCard` · `ShowroomStory` ·
-`LocationSection` · `ProductViewer` (front/side/back) · `GarmentPlate` · `GarmentFlat` ·
-`WhatsAppFab` · `CTAButton` · `SiteFooter` · `PageTransition` · `Grain`
-
-Content lives in `src/data/`. Presentation never hardcodes a phone number, a URL, a
-category, an address or a price.
-
-## 8. The sale
-
-`src/data/sale.ts` transcribes the client's Off Season Sale creative. The four offers are
-reproduced exactly as printed — quantity, price and qualifier — and nothing on the site
-states a price that is not one of those four. The artwork itself appears only as a leaning
-printed flyer beside the masthead: a supporting visual, never the content, so every offer
-stays selectable text that reflows, translates and is read out correctly.
-
-Yellow is allowed in this section and nowhere else, and only as metal type, a hairline, a
-1px hover rule and a 13%-opacity wash. Black, gold and cream still carry the section.
-
-## 9. Catalog photography
-
-`src/data/catalog-images.json` is the contract between the generator and the site. A
-category present in the manifest renders photographs through `GarmentPlate`; a category
-absent from it renders the drafted `GarmentFlat`. Nothing else in the UI changes, so
-imagery can arrive one category at a time without a redesign.
-
-Photographs ship as `.webp` at two widths (1200 and 640) and are served through a native
-`srcset`, because the static export runs with the Next image optimiser disabled.
+Under `prefers-reduced-motion: reduce` every one of these is skipped and the page renders
+in its rest state. Only the scroll progress bar keeps tracking.

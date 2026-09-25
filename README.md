@@ -1,10 +1,10 @@
 # BRAND STORE — Menswear, Kanpur
 
-A static, catalog-and-showroom website for BRAND STORE. No cart, no checkout, no accounts —
+A static catalog-and-showroom website for BRAND STORE. No cart, no checkout, no accounts —
 every enquiry goes to WhatsApp, and the visit ends at the door on Sabji Mandi Road.
 
-Next.js (App Router) · React · TypeScript · Tailwind CSS v4 · GSAP + ScrollTrigger · Lenis ·
-Three.js / React Three Fiber. Exported as plain HTML — there is no Node server in production.
+Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS v4. Exported as plain HTML;
+there is no Node server in production and there are no runtime dependencies beyond React.
 
 ---
 
@@ -33,148 +33,115 @@ npm run serve      # serves out/ on http://localhost:4178
 
 ---
 
+## Routes
+
+| Path | Page | Nav label |
+|---|---|---|
+| `/` | Home — hero, sale ticker, sale band, featured rail, editorial, categories, location | Home |
+| `/catalog/` | Shop — sticky filter bar over the full product grid | Shop |
+| `/sale/` | Off Season Sale campaign — poster, four offer rows, marks strip | Sale |
+| `/about/` | Visit the store — photo hero, categories card, location and map | Store |
+
+The mobile menu labels the last one "Visit the store". Every page closes with the wordmark
+band and the footer, and carries the floating WhatsApp CTA.
+
+---
+
 ## What to change, and where
 
 Everything the client is likely to change lives in two files. Nothing in the UI hardcodes a
-number, a URL, an address or a discount.
+number, a URL, an address or a price.
 
 ### `src/data/site.ts`
 
 | Value | Field |
 |---|---|
-| WhatsApp number | `whatsappNumber` (digits only, with country code) and `phoneDisplay` |
+| WhatsApp number | `whatsappNumber` (digits only, with country code) |
 | Default WhatsApp message | `whatsappMessage` |
-| **Instagram URL** | `instagram.url` — **currently a placeholder**, see below |
-| Address | `location.line1` / `line2` / `city` / `region` |
-| Map pin | `location.coordinates` — `null` today, so the map resolves the address by search |
-| Tagline and brand phrase | `tagline`, `taglineParts`, `phrase` |
+| Phone | `phoneDisplay`, `phoneTel` |
+| **Instagram URL** | `instagramUrl` — **currently a placeholder**, see below |
+| Address | `address.line1` / `line2` / `locality` / `city` / `region` |
+| Tagline and brand phrase | `tagline`, `phrase`, `signoff` |
+| Navigation | `nav` |
 
-### `src/data/sale.ts`
+### `src/data/products.ts`
 
-The Off Season Sale, transcribed from the client's creative. Four offers, each with its
-quantity, price, qualifier, feature list, handwritten line and colourways. Editing an offer
-here updates the home section, its WhatsApp message and its colour swatches together. No
-price appears anywhere on the site that is not one of these four.
+The eight categories, the ten product lines, and the four Off Season Sale offers
+transcribed from the client's creative. Editing an offer here updates the ticker, the home
+sale band and the sale page together. No price appears anywhere on the site that is not in
+this file.
 
-### `src/data/catalog.ts`
+A product with `primaryImage: null` renders a striped placeholder captioned
+`product shot · {category}` rather than a broken image, so photography can arrive one
+category at a time. Four categories — shirts, jeans, chinos and cotton/dry-fit — are in that
+state today.
 
-The eight categories, their copy and their front/side/back views. Adding a category adds it
-to the mega menu, the home page collection, the catalog page, the footer and its own page —
-no components need touching.
+### `src/lib/whatsapp.ts`
+
+`openWhatsApp()` and `whatsappUrl()`. Every conversion path on the site goes through one of
+them, so the number and the message exist in exactly one place:
+
+```
+https://wa.me/918004490534?text=Hi%20Brand%20Store%20!%20Please%20send%20me%20the%20Catalog%20and%20current%20Sale%20%3F
+```
 
 ---
 
 ## The Instagram placeholder
 
-`site.instagram.url` is set to:
+`site.instagramUrl` is set to `https://www.instagram.com/brandstore`. Every Instagram
+button and link on the site — header, mobile menu, location block, footer — reads that one
+value. Replace it and `instagramHandle` with the real profile; nothing else needs to change.
 
-```
-https://instagram.com/__BRANDSTORE_INSTAGRAM_HANDLE__
-```
+---
 
-Every Instagram button, hover state and link on the site reads that one value. Replace it
-with the real profile URL, set `instagram.handle`, and set `isPlaceholder: false`. Nothing
-else needs to change.
+## Theme
+
+Light and dark are both first-class. The choice is stored in `localStorage['bs-theme']`,
+defaults to the operating system's `prefers-color-scheme`, and is applied before first paint
+by a small inline script in `<head>` so the page never flashes the wrong theme. While the
+visitor has not chosen for themselves, the site keeps following the OS.
+
+Tokens live on `:root` and `[data-theme='dark']` in `src/app/globals.css` as plain custom
+properties, and Tailwind maps its utilities onto them with `@theme inline` — so
+`bg-bg`, `text-fg` and the rest resolve to `var()` at runtime and switch with the theme.
+
+---
+
+## Motion
+
+`src/components/MotionLayer.tsx` is the whole motion system: one `requestAnimationFrame`
+loop and one pointer listener, reading `data-*` markers off the DOM.
+
+| Marker | Effect |
+|---|---|
+| `data-progress` | scroll progress bar under the header |
+| `data-parallax="n"` | translateY against the parent, clamped to ±4.5% of its height |
+| `data-scroll3d` | rotateX / translateZ as the parent crosses the viewport |
+| `data-scrollx="n"` | horizontal drift with scroll (the wordmark band) |
+| `data-ticker` | 32s marquee; scroll velocity drives its rate and skew |
+| `data-tilt="n"` | pointer tilt with a radial glare, fine pointers only |
+| `data-magnetic` | pull toward the pointer |
+| `data-reveal` | enter from below on first intersection |
+| `data-word` | masked headline line |
+| `data-hero-photo` | intro scale and brightness |
+
+Every one of them is skipped under `prefers-reduced-motion`; only the progress bar keeps
+tracking. The route transition is a CSS keyframe (`.route-in`) for the same reason — a
+JavaScript branch on the motion preference makes the server and client trees disagree, and
+a keyframe is collapsed to nothing by the global reduced-motion block.
 
 ---
 
 ## Catalog photography
 
-Each category has three views: front, side and back.
+`public/catalog/<category>/<colour>.webp` plus a `@640` variant of each. Product cards and
+the home sale rail load the `@640` file; the large sale rows load the full-size one.
 
-`src/data/catalog-images.json` is the contract. A category listed there renders
-photographs; one that is not falls back to a **drafted garment flat** — a technical fashion
-drawing produced parametrically in `src/components/GarmentFlat.tsx`. So imagery can arrive
-one category at a time and nothing ever renders broken.
+The current photographs were cut from the client's own Off Season Sale creative, which is
+why a few garments carry a visible edge where they overlapped a neighbour in the original
+artwork. Replacing a file in place is all that is needed to improve one.
 
-### Generating it
-
-```bash
-cp .env.example .env.local          # then paste your Google AI Studio key in
-npm run generate:catalog            # only what is missing
-npm run generate:catalog -- --force # regenerate everything
-npm run generate:catalog -- --only polo-t-shirts,lower
-npm run generate:catalog -- --views front
-```
-
-`scripts/generate-catalog.mjs` runs on your machine, in Node, and nowhere else. It:
-
-1. reads `GEMINI_API_KEY` from `.env.local` (git-ignored) or the shell;
-2. generates the **front** frame first — for the four categories the client photographed on
-   the sale creative, their real product crop from `assets/reference/` goes in as a visual
-   reference so the garment matches the actual product;
-3. generates **side** and **back** by passing that front frame back in as a reference, so
-   the same man in the same clothes under the same light simply turns around instead of
-   being re-imagined from the text;
-4. writes the raw PNG to `assets/generated/` (git-ignored) and optimised `.webp` at 1200px
-   and 640px into `public/catalog/<slug>/`;
-5. rewrites `src/data/catalog-images.json`.
-
-Prompts live in `scripts/catalog-prompts.mjs` — one shared studio setup, one shared realism
-block, per-category model and garment descriptions. Edit the prompt, re-run with `--force`.
-
-The script tries `gemini-3-pro-image` (Nano Banana Pro), then `gemini-3.1-flash-image`, then
-`gemini-2.5-flash-image`, and reports which one answered. Pin one with `GEMINI_IMAGE_MODEL`.
-
-### Using the client's own photography instead
-
-Drop `front.webp` / `side.webp` / `back.webp` (plus optional `@640` variants) into
-`public/catalog/<slug>/`, add the entry to `catalog-images.json`, rebuild. Real product
-photographs always beat generated ones and should replace them as they arrive.
-
-### The API key
-
-- Lives only in `.env.local`, which `.gitignore` excludes along with every other `.env`
-  variant except the checked-in `.env.example` template.
-- Is read only by a Node script. It is never imported by anything under `src/`, never
-  prefixed `NEXT_PUBLIC_`, never inlined into the bundle and never sent to a browser.
-- Only the script's *output* — `.webp` files — is deployed.
-
----
-
-## Structure
-
-```
-src/
-  app/                    home · about · catalog · catalog/[slug] · 404
-  components/             one component per section, each owning its own timeline
-  data/                   site · sale · catalog · nav  (content, never presentation)
-  data/catalog-images.json  written by the generator; the site reads it
-  lib/motion.ts           reveal observer, reduced-motion + breakpoint hooks, lazy GSAP
-scripts/                  generate-catalog.mjs + catalog-prompts.mjs (local only)
-assets/reference/         the client's sale creative and product crops taken from it
-assets/generated/         raw generation output (git-ignored, never deployed)
-public/brand/             the client's real assets: showroom, monogram, sale poster
-public/catalog/<slug>/    generated front/side/back .webp, two widths each
-docs/design-system.md     palette, type, spacing, motion, 3D, sale and imagery rules
-```
-
-## Motion and 3D
-
-- GSAP + ScrollTrigger drives the scrubbed sale masthead — the word and the flyer drift
-  against each other as the section passes. The section owns and reverts its own
-  `gsap.context` on unmount, and `matchMedia` switches it off below 860px.
-- Lenis is mounted only on fine-pointer devices with motion allowed, and is driven from
-  GSAP's ticker so ScrollTrigger stays in sync.
-- The only WebGL on the site is the hero: one full-screen shader plane rendering the real
-  showroom photograph with pointer/scroll parallax, a breathing lens, chromatic edge falloff
-  and a warm grade. One draw call, no models. It is not mounted below 1024px, under
-  `prefers-reduced-motion`, without WebGL, or on Save-Data; the fallback is the same
-  photograph with a CSS drift. Its render loop parks when the hero scrolls away.
-- `prefers-reduced-motion` renders every section in its final state: no Lenis, no pinning,
-  no canvas, no scrubbing — and never a blank page. A `<noscript>` rule does the same if
-  JavaScript never runs.
-
-## Verified
-
-Production build served as static files from `out/`:
-
-- Home, About, Catalog, all eight category pages, and 404 load directly by URL
-- Catalog mega menu (hover + keyboard), mobile accordion, front/side/back viewer
-- WhatsApp deep links (general, sale, per-category, visit) and the Instagram placeholder
-- Location section: drafted map sequence hands over to the live keyless Google Maps embed
-- 390 / 834 / 1440 viewports, no horizontal overflow
-- Sale section: four offers as live text, per-offer WhatsApp links, poster as supporting visual
-- Lighthouse (mobile): Accessibility 100, Best Practices 100, SEO 100
-- LCP 932 ms, CLS 0.00, no console errors
-- No `GEMINI_` reference anywhere in `src/` or in the built output
+`scripts/generate-catalog.mjs` remains in the repo for generating the missing four
+categories from a text prompt once an image-capable API key is available. It reads
+`GEMINI_API_KEY` from `.env.local`, which is git-ignored and must never be committed.

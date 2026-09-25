@@ -1,70 +1,51 @@
 /**
- * Single source of truth for everything the client may want to change.
- * Nothing in the UI hardcodes a number, a URL, an address or a discount.
+ * Single source of truth for config and conversion. Nothing in the UI hardcodes a URL,
+ * a number or a price — it all comes from here.
  */
 
 export const site = {
   name: 'BRAND STORE',
   segment: 'Menswear',
-  tagline: 'Style • Quality • You',
-  taglineParts: ['Style', 'Quality', 'You'] as const,
+  tagline: ['Style', 'Quality', 'You'] as const,
   phrase: 'Good Clothes Better Mood',
+  signoff: 'Brand Store — Wear Your Story',
 
-  /** Digits only, with country code, no +, no spaces. */
   whatsappNumber: '918004490534',
-  /** Human-readable form used in text and tel: links. */
+  whatsappMessage: 'Hi Brand Store ! Please send me the Catalog and current Sale ?',
   phoneDisplay: '+91 80044 90534',
-  whatsappMessage:
-    'Hi BRAND STORE, I found your website and would like to explore the latest collection.',
+  phoneTel: '+918004490534',
 
-  /**
-   * PLACEHOLDER — replace with the real Instagram profile URL when the client provides it.
-   * Everything downstream (buttons, footer, product CTAs) reads this value.
-   */
-  instagram: {
-    url: 'https://instagram.com/__BRANDSTORE_INSTAGRAM_HANDLE__',
-    handle: '@brandstore',
-    isPlaceholder: true,
-  },
+  /** PLACEHOLDER — replace with the real profile. Every Instagram link reads this value. */
+  instagramUrl: 'https://www.instagram.com/brandstore',
+  instagramHandle: '@brandstore',
 
-  location: {
+  address: {
     line1: '8/81 A, Arya Nagar',
+    locality: 'Arya Nagar',
     line2: 'Sabji Mandi Road',
     city: 'Kanpur',
     region: 'Uttar Pradesh',
-    country: 'India',
-    get full() {
-      return `${this.line1}, ${this.line2}, ${this.city}`;
-    },
-    /**
-     * Left null on purpose — no coordinates have been supplied by the client, and the map
-     * resolves the address by query instead. Fill in as [lat, lng] to pin exactly.
-     */
-    coordinates: null as [number, number] | null,
   },
 
+  images: {
+    monogram: '/brand/monogram.jpg',
+    showroom: '/brand/showroom.jpg',
+    poster: '/brand/sale-poster.webp',
+  },
 } as const;
 
-/** Builds the WhatsApp deep link, optionally with a context-specific message. */
-export function whatsappLink(message: string = site.whatsappMessage): string {
-  return `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(message)}`;
-}
+export const addressFull = `${site.address.line1}, ${site.address.line2}, ${site.address.city}`;
 
-/** Keyless Google Maps embed resolved by address query — no API key, no backend. */
-export function mapEmbedSrc(): string {
-  const q = site.location.coordinates
-    ? site.location.coordinates.join(',')
-    : `${site.location.full}, ${site.location.region}, ${site.location.country}`;
-  return `https://www.google.com/maps?q=${encodeURIComponent(q)}&z=16&output=embed`;
-}
+const mapQuery = encodeURIComponent(
+  `${site.name}, ${addressFull}, ${site.address.region}, India`,
+);
 
-/** Opens the location in the visitor's preferred maps app. */
-export function mapDirectionsLink(): string {
-  const q = site.location.coordinates
-    ? site.location.coordinates.join(',')
-    : `${site.name}, ${site.location.full}, ${site.location.region}`;
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-}
+export const mapEmbedSrc = `https://www.google.com/maps?q=${mapQuery}&z=16&output=embed`;
+export const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
 
-export { nav } from './nav';
-export type { NavItem } from './nav';
+export const nav = [
+  { label: 'Home', short: 'Home', href: '/', num: '01' },
+  { label: 'Shop', short: 'Shop', href: '/catalog', num: '02' },
+  { label: 'Sale', short: 'Sale', href: '/sale', num: '03' },
+  { label: 'Visit the store', short: 'Store', href: '/about', num: '04' },
+] as const;

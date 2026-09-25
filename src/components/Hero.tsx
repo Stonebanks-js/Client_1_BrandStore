@@ -1,161 +1,152 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { site, whatsappLink } from '@/data/site';
-import { usePrefersReducedMotion } from '@/lib/motion';
-import { WhatsAppIcon } from './icons';
 
-const HeroCanvas = dynamic(() => import('./HeroCanvas'), { ssr: false });
+import { site } from '@/data/site';
+import { openWhatsApp } from '@/lib/whatsapp';
+import { MaskLine } from '@/components/Masked';
 
-/**
- * A split opening: the shop on the right, who it is and where it is on the left.
- *
- * The photograph is the point, so it keeps its own half of the frame at full strength
- * instead of being buried under a scrim and a wall of display type. The left panel is
- * ink so the two halves read as one composition rather than a caption on a picture.
- *
- * On a phone the order flips to photograph first, because that is the thing worth seeing
- * before anything else.
- */
-export default function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const scrollRef = useRef(0);
-  const [webgl, setWebgl] = useState(false);
-  const [inView, setInView] = useState(true);
-  const [entered, setEntered] = useState(false);
-  const reduced = usePrefersReducedMotion();
+const EYEBROW = `${site.segment} · ${site.address.line1}, ${site.address.city}`;
 
-  useEffect(() => {
-    if (reduced) return;
-    const wide = window.matchMedia('(min-width: 1024px)').matches;
-    const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
-    if (!wide || nav.connection?.saveData) return;
-    let ok = false;
-    try {
-      const c = document.createElement('canvas');
-      ok = Boolean(c.getContext('webgl2') ?? c.getContext('webgl'));
-    } catch {
-      ok = false;
-    }
-    setWebgl(ok);
-  }, [reduced]);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const onScroll = () => {
-      const h = el.offsetHeight || 1;
-      scrollRef.current = Math.min(1, Math.max(0, window.scrollY / h));
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        const r = e.boundingClientRect;
-        setInView(r.height === 0 || (r.top < window.innerHeight && r.bottom > 0));
-      },
-      { threshold: 0, rootMargin: '120px 0px' },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setEntered(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
-
+/** The showroom photograph: parallax on the frame, intro scale/brightness on the plate. */
+function Photo({ className = '', priority = true }: { className?: string; priority?: boolean }) {
   return (
-    <section
-      ref={sectionRef}
-      className="relative isolate grid min-h-[100svh] grid-cols-1 overflow-hidden bg-ink pt-[var(--header-h)] lg:grid-cols-[minmax(0,42%)_minmax(0,58%)] lg:pt-0"
-    >
-      {/* photograph — first on a phone, right-hand half on a desktop */}
-      <div className="relative order-1 min-h-[44svh] lg:order-2 lg:min-h-0">
-        {webgl ? (
-          <HeroCanvas src="/brand/showroom.jpg" scrollRef={scrollRef} active={inView} />
-        ) : (
+    <div className={`overflow-hidden bg-bg-2 ${className}`}>
+      <div data-parallax="0.2" className="absolute inset-0 will-change-transform">
+        <div data-hero-photo className="absolute inset-0">
           <Image
-            src="/brand/showroom.jpg"
-            alt="The BRAND STORE showroom on Sabji Mandi Road: lit shelving of folded shirts, a rail of tees, and the illuminated wall sign"
+            src={site.images.showroom}
+            alt="Inside the Brand Store floor in Arya Nagar, Kanpur"
             fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 58vw"
-            className={`object-cover object-center ${reduced ? '' : 'kenburns'}`}
+            priority={priority}
+            sizes="(max-width: 1023px) 100vw, 60vw"
+            className="object-cover object-[50%_42%]"
           />
-        )}
-        {/* just enough falloff on the inner edge to join the two halves */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-transparent lg:bg-gradient-to-r lg:from-ink lg:via-ink/0 lg:to-transparent"
-        />
+        </div>
       </div>
+    </div>
+  );
+}
 
-      {/* wordmark and orientation */}
-      <div className="relative order-2 flex flex-col justify-center gap-8 px-[var(--gutter)] py-[clamp(2.5rem,6vh,4.5rem)] lg:order-1 lg:py-0 lg:pl-[max(var(--gutter),4vw)] lg:pr-[clamp(2rem,4vw,4rem)]">
-        <div
-          className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-          style={{ opacity: entered ? 1 : 0, transform: entered ? 'none' : 'translateY(16px)' }}
-        >
-          <p className="t-small font-semibold uppercase tracking-[0.28em] text-gold-lt">
-            {site.segment}
-          </p>
+export default function Hero() {
+  return (
+    <section>
+      {/* ------------------------------- desktop ------------------------------- */}
+      <div
+        className="hidden lg:grid lg:grid-cols-[5fr_7fr]"
+        style={{ minHeight: 'min(calc(100svh - 76px), 940px)' }}
+      >
+        <div className="flex flex-col justify-center gap-8 py-[clamp(48px,6vw,96px)] pl-[clamp(16px,5vw,80px)] pr-[clamp(32px,4vw,72px)]">
+          <p className="t-eyebrow">{EYEBROW}</p>
 
-          <h1 className="t-hero mt-5 text-on-ink">
-            Brand
-            <br />
-            Store
+          <h1>
+            <MaskLine className="t-serif">
+              <span style={{ fontSize: 'clamp(2.8rem, 4.6vw, 6rem)' }}>Good Clothes</span>
+            </MaskLine>
+            <span
+              className="t-display mt-2 block"
+              style={{ fontSize: 'clamp(3.6rem, 7.4vw, 9.6rem)' }}
+            >
+              <MaskLine>Better</MaskLine>
+              <MaskLine className="text-gold">Mood</MaskLine>
+            </span>
           </h1>
 
-          <p className="t-phrase mt-6 text-[clamp(1.25rem,2vw,1.7rem)] text-on-ink-dim">
-            {site.tagline}
+          <p className="max-w-[42ch] text-[16px] leading-relaxed text-fg-dim">
+            Top wear and bottom wear for men, picked one rail at a time — cotton that
+            holds its shape, fits that sit where they should, and prices that make sense
+            on Sabji Mandi Road.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              data-magnetic
+              onClick={() => openWhatsApp()}
+              className="t-btn inline-flex h-14 items-center rounded-[2px] bg-btn-bg px-8 text-btn-fg"
+            >
+              Catalog on WhatsApp →
+            </button>
+            <Link
+              href="/sale"
+              className="t-btn inline-flex h-14 items-center rounded-[2px] border border-line px-8 hover:border-gold"
+            >
+              Off Season Sale
+            </Link>
+          </div>
+
+          <p className="t-serif text-[clamp(1.1rem,1.5vw,1.5rem)] text-fg-mute">
+            {site.tagline.map((word) => `— ${word} `)}
           </p>
         </div>
 
+        <div className="relative">
+          <Photo className="relative h-full w-full" />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3"
+            style={{
+              background: 'linear-gradient(to top, rgba(20,18,15,.8), transparent)',
+            }}
+          />
+          <p className="absolute bottom-6 left-7 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#e6e2d8]">
+            The floor · {site.address.line1}
+          </p>
+        </div>
+      </div>
+
+      {/* -------------------------------- mobile -------------------------------- */}
+      <div className="lg:hidden">
         <div
-          className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className="relative"
           style={{
-            opacity: entered ? 1 : 0,
-            transform: entered ? 'none' : 'translateY(16px)',
-            transitionDelay: '140ms',
+            height: 'calc(100svh - clamp(60px,7vw,76px) - 76px)',
+            minHeight: '420px',
           }}
         >
-          <p className="t-lead text-on-ink-dim">
-            A menswear floor in Arya Nagar, Kanpur. Come in, try things on properly, and leave
-            with something that fits.
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/catalog"
-              className="inline-flex items-center justify-center bg-paper px-7 py-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-gold-lt"
-            >
-              Shop the collection
-            </Link>
-            <a
-              href={whatsappLink()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 border border-on-ink/30 px-6 py-4 text-[0.95rem] font-semibold text-on-ink transition-colors duration-200 hover:border-on-ink"
-            >
-              <WhatsAppIcon className="h-[18px] w-[18px]" />
-              WhatsApp
-            </a>
+          <Photo className="absolute inset-0" />
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(to top, #14120f 0%, rgba(20,18,15,.92) 38%, rgba(20,18,15,.7) 62%, rgba(20,18,15,.15) 88%)',
+            }}
+          />
+          <div className="absolute inset-x-0 bottom-0 px-[clamp(16px,5vw,80px)] pb-8">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#e3be79]">
+              {EYEBROW}
+            </p>
+            <h1 className="mt-4 text-[#f7f6f3]">
+              <MaskLine className="t-serif">
+                <span style={{ fontSize: 'clamp(2.2rem, 10vw, 3.4rem)' }}>Good Clothes</span>
+              </MaskLine>
+              <span
+                className="t-display mt-1 block"
+                style={{ fontSize: 'clamp(3.6rem, 19vw, 6.4rem)' }}
+              >
+                <MaskLine>Better</MaskLine>
+                <MaskLine>
+                  <span style={{ color: '#e3be79' }}>Mood</span>
+                </MaskLine>
+              </span>
+            </h1>
           </div>
         </div>
+
+        <Link
+          href="/sale"
+          className="flex items-center gap-3 border-b border-line bg-bg px-[clamp(16px,5vw,80px)] py-5"
+        >
+          <span
+            className="t-display text-[22px] text-signal"
+            style={{ WebkitTextStroke: '0.6px var(--fg)' }}
+          >
+            Sale
+          </span>
+          <span className="text-[13px] text-fg-dim">Four offers from ₹999 →</span>
+        </Link>
       </div>
     </section>
   );
